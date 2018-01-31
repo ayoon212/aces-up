@@ -32,6 +32,13 @@ function getDefaultState() {
   return newState;
 }
 
+/*
+ * Utility Array function
+ */
+function getLastElement(arr) {
+  return arr.length > 0 ? arr[arr.length-1] : null;
+}
+
 export default class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -55,7 +62,7 @@ export default class Game extends React.Component {
         } else {
           comp = tableau;
         }
-        return acc && !this.canDiscard(tableau[tableau.length-1], index);
+        return acc && !this.canDiscard(getLastElement(tableau), index);
       });
       if (loss) {
         Alert.alert("No more moves! You lose.");
@@ -67,7 +74,7 @@ export default class Game extends React.Component {
         } else {
           comp = tableau;
         }
-        return acc && (comp[comp.length-1].value === 1);
+        return acc && (getLastElement(comp).value === 1);
       });
 
       if (win) {
@@ -83,7 +90,7 @@ export default class Game extends React.Component {
         continue;
       }
 
-      const compare = tableau[tableau.length-1];
+      const compare = getLastElement(tableau);
       if (card.suit === compare.suit && card.value !== 1 &&
           (card.value <= compare.value || compare.value === 1)) {
         // This card can be discarded; Aces high and can't be discarded
@@ -94,22 +101,13 @@ export default class Game extends React.Component {
   }
 
   tryDiscard(card, index) {
-    this.state.tableaus.some((tableau, i) => {
-      if (index === i || tableau.length === 0) {
-        return false;
-      }
-
-      const compare = tableau[tableau.length-1];
-      if (card.suit === compare.suit && card.value !== 1 &&
-          (card.value <= compare.value || compare.value === 1)) {
-        // Discard this card from pile; Aces high and can't be discarded
-        this.setState((previousState) => {
-          previousState.tableaus[index].pop();
-          return previousState;
-        });
-        return true;
-      }
-    });
+    if (this.canDiscard(card, index)) {
+      // Discard this card from pile
+      this.setState((previousState) => {
+        previousState.tableaus[index].pop();
+        return previousState;
+      });
+    }
   }
 
   resetCards() {
@@ -153,7 +151,7 @@ export default class Game extends React.Component {
     if (this.state.tableaus.length > 0) {
       tableaus = this.state.tableaus.map((tableau, index) => {
         if (tableau && tableau.length > 0) {
-          const topCard = tableau[tableau.length-1];
+          const topCard = getLastElement(tableau);
           return (
             <View key={topCard.suit+topCard.value}>
               <PlayingCard
