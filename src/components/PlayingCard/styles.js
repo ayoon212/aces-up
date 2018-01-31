@@ -11,5 +11,10 @@ export default StyleSheet.create({
   fullSize: {
     height: "100%",
     width: "100%"
+  },
+  card: {
+    paddingTop: 5,
+    paddingLeft: 10,
+    fontSize: 30
   }
 });

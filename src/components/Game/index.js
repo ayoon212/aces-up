@@ -5,6 +5,7 @@ import {
   View
 } from "react-native";
 import {Button} from "react-native-elements";
+import PlayingCard from "../PlayingCard";
 import Deck from "../Deck";
 import {deck} from "../Deck/deck";
 
@@ -69,7 +70,7 @@ export default class Game extends React.Component {
     if (this.state.tableaus.length > 0) {
       tableaus = this.state.tableaus.map((tableau) => {
         if (tableau) {
-          return <Text key={tableau.suit+tableau.value}>{tableau.value} of {tableau.suit}</Text>;
+          return <PlayingCard key={tableau.suit+tableau.value} content={tableau} />;
         } else {
           return null;
         }
@@ -93,7 +94,7 @@ export default class Game extends React.Component {
         <View>
           <Text>{cardsRemaining}</Text>
           <Text>Tableaus:</Text>
-          {tableaus}
+          <View style={styles.tableaus}>{tableaus}</View>
         </View>
         <Button
           buttonStyle={styles.button}
@@ -112,5 +113,9 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#5E35B1"
+  },
+  tableaus: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   }
 });
