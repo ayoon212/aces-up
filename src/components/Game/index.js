@@ -39,6 +39,9 @@ export default class Game extends React.Component {
     this.state = getDefaultState();
     this.canDiscard = this.canDiscard.bind(this);
     this.tryDiscard = this.tryDiscard.bind(this);
+    this.canMove = this.canMove.bind(this);
+    this.tryMove = this.tryMove.bind(this);
+    this.tryAction = this.tryAction.bind(this);
     this.resetCards = this.resetCards.bind(this);
     this.dealCards = this.dealCards.bind(this);
   }
@@ -78,6 +81,7 @@ export default class Game extends React.Component {
   }
 
   canDiscard(card, index) {
+    // Can discard if there exists a higher card of same suit
     for (let i = 0; i < this.state.tableaus.length; i++) {
       const tableau = this.state.tableaus[i];
       if (index === i || tableau.length === 0) {
@@ -101,6 +105,46 @@ export default class Game extends React.Component {
         previousState.tableaus[index].pop();
         return previousState;
       });
+      return true;
+    }
+    return false;
+  }
+
+  canMove(card, index) {
+    // Can move if there is an empty pile
+    for (let i = 0; i < this.state.tableaus.length; i++) {
+      const tableau = this.state.tableaus[i];
+      if (index === i) {
+        continue;
+      }
+
+      if (tableau.length === 0) {
+        // Add 1 to i so we don't return 0, a falsey value
+        return i+1;
+      }
+    }
+    return 0;
+  }
+
+  tryMove(card, index) {
+    const emptyPile = this.canMove(card, index);
+    if (emptyPile) {
+      // Move this card
+      this.setState((previousState) => {
+        const toMove = previousState.tableaus[index].pop();
+        previousState.tableaus[emptyPile-1].push(toMove);
+        return previousState;
+      });
+      return true;
+    }
+    return false;
+  }
+
+  tryAction(card, index) {
+    if (this.tryDiscard(card, index)) {
+      // TODO: Update score
+    } else {
+      this.tryMove(card, index);
     }
   }
 
@@ -150,7 +194,7 @@ export default class Game extends React.Component {
             <Tableau
               key={topCard.suit+topCard.value}
               cards={tableau}
-              onPress={() => this.tryDiscard(topCard, index)}
+              onPress={() => this.tryAction(topCard, index)}
             />
           );
         } else {
