@@ -6,9 +6,10 @@ import {
   View
 } from "react-native";
 import {Button} from "react-native-elements";
-import PlayingCard from "../PlayingCard";
+import Tableau from "../Tableau";
 import Deck from "../Deck";
 import {deck} from "../Deck/deck";
+import {getLastElement} from "../../util";
 
 /*
  * State init
@@ -30,13 +31,6 @@ function getDefaultState() {
   newState.tableaus = new Array([],[],[],[]);
   newState.cardsRemaining = deckCopy;
   return newState;
-}
-
-/*
- * Utility Array function
- */
-function getLastElement(arr) {
-  return arr.length > 0 ? arr[arr.length-1] : null;
 }
 
 export default class Game extends React.Component {
@@ -153,21 +147,14 @@ export default class Game extends React.Component {
         if (tableau && tableau.length > 0) {
           const topCard = getLastElement(tableau);
           return (
-            <View key={topCard.suit+topCard.value}>
-              <PlayingCard
-                content={topCard}
-                onPress={() => this.tryDiscard(topCard, index)}
-              />
-              <Text>Stack: {tableau.length}</Text>
-            </View>
+            <Tableau
+              key={topCard.suit+topCard.value}
+              cards={tableau}
+              onPress={() => this.tryDiscard(topCard, index)}
+            />
           );
         } else {
-          return (
-            <View key={"empty"+index}>
-              <PlayingCard />
-              <Text>Stack: 0</Text>
-            </View>
-          );
+          return <Tableau key={"empty"+index} />;
         }
       });
     }
