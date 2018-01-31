@@ -9,9 +9,11 @@ import PlayingCard from "../PlayingCard";
 import Deck from "../Deck";
 import {deck} from "../Deck/deck";
 
+/*
+ * State init
+ */
 const defaultState = {
   score: 0,
-  tableaus: [],
   numCards: 52
 };
 
@@ -24,6 +26,7 @@ function copyDeck() {
 function getDefaultState() {
   const deckCopy = copyDeck();
   const newState = Object.assign({}, defaultState);
+  newState.tableaus = new Array([],[],[],[]);
   newState.cardsRemaining = deckCopy;
   return newState;
 }
@@ -32,8 +35,30 @@ export default class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = getDefaultState();
-    this.dealCards = this.dealCards.bind(this);
+    this.tryDiscard = this.tryDiscard.bind(this);
     this.resetCards = this.resetCards.bind(this);
+    this.dealCards = this.dealCards.bind(this);
+  }
+
+  /*
+   * Gameplay
+   */
+  tryDiscard(card, index) {
+    this.state.tableaus.some((tableau, i) => {
+      if (index === i || tableau.length === 0) {
+        return false;
+      }
+
+      const compare = tableau[tableau.length-1];
+      if (card.suit === compare.suit && card.value !== 1 && card.value <= compare.value) {
+        // Discard this card from pile, Aces can't be discarded
+        this.setState((previousState) => {
+          previousState.tableaus[index].pop();
+          return previousState;
+        });
+        return true;
+      }
+    });
   }
 
   resetCards() {
@@ -50,29 +75,47 @@ export default class Game extends React.Component {
       } else {
         // Pull out 4 random cards and update state
         const cards = previousState.cardsRemaining;
+        const tableaus = previousState.tableaus;
         let toDeal = [], index = 0;
         for (let i = prevNumCards-1; i > prevNumCards-5; i--) {
           index = Math.floor(Math.random()*i);
           toDeal = toDeal.concat(cards.splice(index,1));
         }
+        for (let i = 0; i < 4; i++) {
+          tableaus[i].push(toDeal[i]);
+        }
         
         return ({
           numCards: prevNumCards - 4,
           cardsRemaining: cards,
-          tableaus: toDeal
+          tableaus: tableaus
         });
       }
     });
   }
 
+  /*
+   * Render
+   */
   render() {
     let tableaus = <Text>Nothing on tableaus yet.</Text>;
     if (this.state.tableaus.length > 0) {
-      tableaus = this.state.tableaus.map((tableau) => {
-        if (tableau) {
-          return <PlayingCard key={tableau.suit+tableau.value} content={tableau} />;
+      tableaus = this.state.tableaus.map((tableau, index) => {
+        if (tableau && tableau.length > 0) {
+          const topCard = tableau[tableau.length-1];
+          return (
+            <PlayingCard
+              key={topCard.suit+topCard.value}
+              content={topCard}
+              onPress={() => this.tryDiscard(topCard, index)}
+            />
+          );
         } else {
-          return null;
+          return (
+            <PlayingCard
+              key={"empty"+index}
+            />
+          );
         }
       });
     }
