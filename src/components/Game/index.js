@@ -50,8 +50,9 @@ export default class Game extends React.Component {
       }
 
       const compare = tableau[tableau.length-1];
-      if (card.suit === compare.suit && card.value !== 1 && card.value <= compare.value) {
-        // Discard this card from pile, Aces can't be discarded
+      if (card.suit === compare.suit && card.value !== 1 &&
+          (card.value <= compare.value || compare.value === 1)) {
+        // Discard this card from pile; Aces high and can't be discarded
         this.setState((previousState) => {
           previousState.tableaus[index].pop();
           return previousState;
@@ -104,21 +105,27 @@ export default class Game extends React.Component {
         if (tableau && tableau.length > 0) {
           const topCard = tableau[tableau.length-1];
           return (
-            <PlayingCard
-              key={topCard.suit+topCard.value}
-              content={topCard}
-              onPress={() => this.tryDiscard(topCard, index)}
-            />
+            <View key={topCard.suit+topCard.value}>
+              <PlayingCard
+                content={topCard}
+                onPress={() => this.tryDiscard(topCard, index)}
+              />
+              <Text>Stack: {tableau.length}</Text>
+            </View>
           );
         } else {
           return (
-            <PlayingCard
-              key={"empty"+index}
-            />
+            <View key={"empty"+index}>
+              <PlayingCard />
+              <Text>Stack: 0</Text>
+            </View>
           );
         }
       });
     }
+
+    /* Debug info for the cards left in deck
+     * TODO: Remove this
     let cardsRemaining = "No cards remaining.";
     if (this.state.cardsRemaining.length > 0) {
       cardsRemaining = this.state.cardsRemaining.reduce((acc, nextCard) => {
@@ -129,22 +136,20 @@ export default class Game extends React.Component {
           return acc + nextString;
         }
       });
-    }
+    }*/
 
     return (
       <View style={styles.container}>
-        <Deck numCards={this.state.numCards} dealCards={this.dealCards} />
-        <View>
-          <Text>{cardsRemaining}</Text>
-          <Text>Tableaus:</Text>
-          <View style={styles.tableaus}>{tableaus}</View>
+        <View style={styles.row}>
+          <Deck numCards={this.state.numCards} dealCards={this.dealCards} />
+          <Button
+            buttonStyle={styles.button}
+            raised
+            title="Reset"
+            onPress={this.resetCards}
+          />
         </View>
-        <Button
-          buttonStyle={styles.button}
-          raised
-          title="Reset"
-          onPress={this.resetCards}
-        />
+        <View style={styles.tableaus}>{tableaus}</View>
       </View>
     );
   }
@@ -154,11 +159,17 @@ const styles = StyleSheet.create({
   container: {
     padding: 30
   },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
   button: {
-    backgroundColor: "#5E35B1"
+    backgroundColor: "#5E35B1",
+    flex: 1
   },
   tableaus: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    marginTop: 20
   }
 });
