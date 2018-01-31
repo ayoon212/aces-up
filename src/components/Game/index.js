@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   StyleSheet,
   Text,
   View
@@ -35,6 +36,7 @@ export default class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = getDefaultState();
+    this.canDiscard = this.canDiscard.bind(this);
     this.tryDiscard = this.tryDiscard.bind(this);
     this.resetCards = this.resetCards.bind(this);
     this.dealCards = this.dealCards.bind(this);
@@ -43,6 +45,54 @@ export default class Game extends React.Component {
   /*
    * Gameplay
    */
+  componentDidUpdate() {
+    // Check win or loss conditions
+    if (this.state.numCards === 0) {
+      let comp = null;
+      const loss = this.state.tableaus.reduce((acc, tableau, index) => {
+        if (acc.hasOwnProperty("length")) {
+          comp = acc;
+        } else {
+          comp = tableau;
+        }
+        return acc && !this.canDiscard(tableau[tableau.length-1], index);
+      });
+      if (loss) {
+        Alert.alert("No more moves! You lose.");
+      }
+
+      const win = this.state.tableaus.reduce((acc, tableau) => {
+        if (acc.hasOwnProperty("length")) {
+          comp = acc;
+        } else {
+          comp = tableau;
+        }
+        return acc && (comp[comp.length-1].value === 1);
+      });
+
+      if (win) {
+        Alert.alert("You win!");
+      }
+    }
+  }
+
+  canDiscard(card, index) {
+    for (let i = 0; i < this.state.tableaus.length; i++) {
+      const tableau = this.state.tableaus[i];
+      if (index === i || tableau.length === 0) {
+        continue;
+      }
+
+      const compare = tableau[tableau.length-1];
+      if (card.suit === compare.suit && card.value !== 1 &&
+          (card.value <= compare.value || compare.value === 1)) {
+        // This card can be discarded; Aces high and can't be discarded
+        return true;
+      }
+    }
+    return false;
+  }
+
   tryDiscard(card, index) {
     this.state.tableaus.some((tableau, i) => {
       if (index === i || tableau.length === 0) {
