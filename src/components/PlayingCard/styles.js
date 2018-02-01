@@ -2,8 +2,8 @@ import {StyleSheet} from "react-native";
 
 export default StyleSheet.create({
   cardContainer: {
-    height: 126,
-    width: 90,
+    height: 100,
+    width: 72,
     padding: 0,
     margin: 0,
     borderRadius: 4
@@ -15,6 +15,6 @@ export default StyleSheet.create({
   card: {
     paddingTop: 5,
     paddingLeft: 10,
-    fontSize: 30
+    fontSize: 20
   }
 });

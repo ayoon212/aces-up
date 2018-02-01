@@ -24,7 +24,9 @@ function getSuitSymbol(suitStr) {
   }
 }
 function getDisplayValue(val) {
-  if (val <= 10) {
+  if (val === 1) {
+    return "A";
+  } else if (val <= 10) {
     return val.toString();
   } else if (val === 11) {
     return "J";

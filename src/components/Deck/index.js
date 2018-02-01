@@ -5,9 +5,15 @@ import PlayingCard from "../PlayingCard";
 
 export default class Deck extends React.Component {
   render() {
+    let card = null;
+    if (this.props.numCards === 0) {
+      card = <PlayingCard />;
+    } else {
+      card = <PlayingCard isFaceDown={true} onPress={this.props.dealCards} />;
+    }
     return (
       <View>
-        <PlayingCard isFaceDown={true} onPress={this.props.dealCards} />
+        {card}
         <Text>Cards Left: {this.props.numCards}</Text>
       </View>
     );
