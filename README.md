@@ -6,6 +6,9 @@ Solitaire game built in React Native.
 * Keeping stats on games
 * Drag-and-drop
 * Animations
+* Images for card faces
+* Empty states for blank stacks
+* Undo functionality (state history)
 
 ### Running locally
 

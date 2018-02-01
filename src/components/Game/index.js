@@ -182,7 +182,7 @@ export default class Game extends React.Component {
    * Render
    */
   render() {
-    let tableaus = <Text>Nothing on tableaus yet.</Text>;
+    let tableaus = null;
     if (this.state.tableaus.length > 0) {
       tableaus = this.state.tableaus.map((tableau, index) => {
         if (tableau && tableau.length > 0) {
