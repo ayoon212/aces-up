@@ -23,6 +23,7 @@ Prerequisites:
 Clone the repository, navigate to the project directory, and run the app using `yarn start`:
 ```
 > cd aces-up
+> yarn install
 > yarn start
 ```
 
