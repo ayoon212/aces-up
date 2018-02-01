@@ -30,7 +30,6 @@ export default class Tableau extends React.Component {
 
     return (
       <View style={styles.tableau}>
-        <Text>Stack: {this.props.cards ? this.props.cards.length : 0}</Text>
         <View style={styles.stack}>
           {stack}
         </View>
