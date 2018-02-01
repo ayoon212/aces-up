@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  StyleSheet,
   Text,
   View
 } from "react-native";
@@ -8,33 +9,51 @@ import {getLastElement} from "../../util";
 
 export default class Tableau extends React.Component {
   render() {
-    /* TODO: Create component for each card
-     * For now, we only show the last card
-    const cards = this.props.cards.map((card) => {
-      // Do stuff
-    })
-    */
-    let cards = null;
+    let stack = null;
     if (this.props.cards && this.props.cards.hasOwnProperty("length") && this.props.cards.length > 0) {
-      const topCard = getLastElement(this.props.cards);
-      cards = (
-        <View>
-          <PlayingCard
-            content={topCard}
-            onPress={this.props.onPress}
-          />
-          <Text>Stack: {this.props.cards.length}</Text>
-        </View>
-      );
+      stack = this.props.cards.map((card, index) => {
+        return (
+          <View
+            key={card.suit+card.value}
+            style={positionOnStack(index)}
+          >
+            <PlayingCard
+              content={card}
+              onPress={(index === this.props.cards.length-1) ? this.props.onPress : null}
+            />
+          </View>
+        );
+      });
     } else {
-      cards = (
-        <View>
-          <PlayingCard />
-          <Text>Stack: 0</Text>
-        </View>
-      );
+      stack = <View style={styles.emptyStack}><PlayingCard /></View>;
     }
 
-    return cards;
+    return (
+      <View style={styles.tableau}>
+        <Text>Stack: {this.props.cards ? this.props.cards.length : 0}</Text>
+        <View style={styles.stack}>
+          {stack}
+        </View>
+      </View>
+    );
   }
 }
+
+function positionOnStack(index) {
+  return {
+    position: "absolute",
+    top: 32*index
+  };
+}
+
+const styles = StyleSheet.create({
+  tableau: {
+    flex: 1
+  },
+  stack: {
+    position: "relative"
+  },
+  emptyStack: {
+    // borderColor: "#add"
+  }
+});
