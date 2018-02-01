@@ -1,3 +1,38 @@
+# Aces Up
+
+Solitaire game built in React Native.
+
+## Feature stretch goals
+* Keeping stats on games
+* Drag-and-drop
+* Animations
+* Images for card faces
+* Empty states for blank stacks
+* Undo functionality (state history)
+
+### Running locally
+
+Prerequisites:
+* Node v8.9.1 or higher
+* yarn v1.3.2 or higher
+* Expo app on Android or iOS
+
+Clone the repository, navigate to the project directory, and run the app using `yarn start`:
+```
+> cd aces-up
+> yarn start
+```
+
+This will display a QR code in the terminal. Open the Expo app on your device and scan the QR code.
+
+
+### Running unit tests
+```
+> yarn test
+```
+
+Below is the README content for create-react-native-app.
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
